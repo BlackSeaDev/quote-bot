@@ -127,3 +127,5 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+Quote_bot_DB.db
+.vscode/settings.json
