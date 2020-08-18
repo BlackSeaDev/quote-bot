@@ -1,8 +1,10 @@
 text = {
-    "start": {0: 'Приветствую, я бот для цитат!',
-              1: 'Hi, i am quote bot!'},
+    "start": 'Приветствую, я бот для цитат! / Hi, i am quote bot!',
+
+    "start_q": {0: 'Чем могу быть полезен?',
+                1: 'How can I help you?'},
                      
-    "get_random_phrase": {0: 'Получаем случайную цитату...',
+    "get_random_quote": {0: 'Получаем случайную цитату...',
                           1: 'Getting random quote...'},
 
     #LANGUAGE

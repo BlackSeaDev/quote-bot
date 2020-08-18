@@ -31,6 +31,7 @@ def setting_lang(update, context):
         # if he inputs some shit we are not allowing to go further
         return language(update)
 
-    markup = ReplyKeyboardMarkup([[c.text['to_main_menu'][lang]]], resize_keyboard=True, one_time_keyboard=True)
+    markup = ReplyKeyboardMarkup([['Get random quote', 'Full list of quotes'], ['Add a new quote']], resize_keyboard=True, one_time_keyboard=False)  # TO-DO: config
     update.message.reply_text(text=c.text['thanks'][lang], reply_markup=markup)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=c.text['start_q'][lang])
     return MAIN_MENU_HANDLER

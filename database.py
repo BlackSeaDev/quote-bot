@@ -12,11 +12,24 @@ class DbInterface:
         self.cursor = self.conn.cursor()
 
         sql_tables = [
-            # Language table
+            # Users table
             """
-            CREATE TABLE IF NOT EXISTS "Language" (
+            CREATE TABLE IF NOT EXISTS "Users" (
                 "chat_id" INTEGER NOT NULL,
-                "lang"    INTEGER
+                "lang"    INTEGER,
+
+                PRIMARY KEY (chat_id)
+            )
+            """,
+            # Quotes table
+            """
+            CREATE TABLE IF NOT EXISTS "Quotes" (
+                "user_id" INTEGER NOT NULL,
+                "q_id"    INTEGER PRIMARY KEY AUTOINCREMENT,
+                "quote"   TEXT NOT NULL,
+                "q_owner" TEXT,
+
+                FOREIGN KEY (user_id) REFERENCES Users(chat_id)
             )
             """,
         ]
@@ -40,42 +53,51 @@ class DbInterface:
             self.conn.commit()
     
     def idx(self) -> None: # creates unique indexes to make impossible to write the same chat_id in BD twi
-        sql2 = 'CREATE UNIQUE INDEX idx_Language_chat_id ON Language (chat_id)'
+        sql2 = 'CREATE UNIQUE INDEX idx_Users_chat_id ON Users (chat_id)'
         self.execute_sql([sql2])
 
 
     def setLang(self, chat_id: int, lang: int) -> None:
-        sql = 'INSERT OR REPLACE INTO Language (chat_id, lang) VALUES (?, ?)'
+        sql = 'INSERT OR REPLACE INTO Users (chat_id, lang) VALUES (?, ?)'
         args = [chat_id, lang]
         self.execute_sql([sql, args])
 
     def getLang(self, chat_id: int) -> int:
-        sql = 'SELECT EXISTS(SELECT * from Language Where chat_id = ?)'
+        sql = 'SELECT EXISTS(SELECT * from Users Where chat_id = ?)'
         args = [chat_id]
         # print(chat_id)
         self.execute_sql([sql, args])
         if self.cursor.fetchall()[0][0] == 0:
             return None
         else:
-            sql = 'SELECT lang from Language Where chat_id = ?'
+            sql = 'SELECT lang from Users Where chat_id = ?'
             args = [chat_id]
             self.execute_sql([sql, args])
             return self.cursor.fetchall()[0][0]
 
-    def randomFact(self) -> str:
-        sql = 'SELECT * FROM Facts ORDER BY random() LIMIT 1'
-        self.execute_sql([sql])
-        fact = self.cursor.fetchall()[0][0]
-        return fact
+    def getRandomQuote(self, user_id: int) -> str:
+        sql = 'SELECT * FROM Quotes Where user_id = ? ORDER BY random() LIMIT 1'
+        args = [user_id]
+        self.execute_sql([sql, args])
+        result = self.cursor.fetchall()
 
-    def updateFacts(self, facts: list) -> int:
-        sql = 'DELETE FROM Facts'
-        self.execute_sql([sql])
+        try:
+            quote, q_owner = result[0][2], result[0][3]
+            # print(quote, q_owner)
 
-        sql = 'INSERT INTO Facts (Fact) VALUES (?)'
-        args = facts
-        self.execute_sql([sql,args],many=True)
-        return len(facts)
+        except Exception as e:
+            print(f'Exception appeared: {e}')
+            quote, q_owner = None, None
+
+        return quote, q_owner
+
+    def getFullListQuotes(self, user_id: int) -> list:
+        sql = 'SELECT * FROM Quotes Where user_id = ?'
+        args = [user_id]
+        self.execute_sql([sql, args])
+        result = [i[2:] for i in self.cursor.fetchall()]
+        # print(result)
+        return result
 
 
 # setting up the database
@@ -101,7 +123,7 @@ DB = start_database()
 
 if __name__=="__main__":
     # print(updateFact())
-    print(DB.randomFact())
+    # print(DB.getRandomQuote())
 
     # print(db.get_users("new"))
     # print(checkUser(100))
