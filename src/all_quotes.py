@@ -7,7 +7,8 @@ from database import DB
 
 def full_list_quotes(update, context):
     result = DB.getFullListQuotes(update.effective_chat.id)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+    # context.bot.send_message(chat_id=update.effective_chat.id, text=f"{result[5][0]}")
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"{result}")
 
     # TO-DO:
     #       1. if list is empty, let user know about it

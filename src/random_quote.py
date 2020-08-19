@@ -24,7 +24,7 @@ def get_random_quote(update, context):
 
     context.bot.send_message(chat_id=update.effective_chat.id, text=c.text['get_random_quote'][lang])
 
-    if rand_quote == None and q_owner == None:
+    if rand_quote == None and q_owner == None: # TO-DO: add one more if statement: when q_owner == None, don't show this
         context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, you don't have any quotes yet!") # TO-DO: config
         return MAIN_MENU_HANDLER
     else:
