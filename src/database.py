@@ -99,6 +99,16 @@ class DbInterface:
         # print(result)
         return result
 
+    def addNewQuote(self, user_id: int, quote: str, q_owner: str) -> None:
+        if q_owner == 'None':
+            sql = 'INSERT INTO Quotes (user_id, quote) VALUES (?, ?)'
+            args = [user_id, quote]
+            self.execute_sql([sql, args])
+        else:
+            sql = 'INSERT INTO Quotes (user_id, quote, q_owner) VALUES (?, ?, ?)'
+            args = [user_id, quote, q_owner]
+            self.execute_sql([sql, args])
+
 
 # setting up the database
 def start_database():

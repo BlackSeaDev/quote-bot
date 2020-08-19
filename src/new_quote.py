@@ -3,7 +3,7 @@ from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 import config as c
 from variables import MAIN_MENU_HANDLER, NEW_QUOTE_HANDLER, ADD_Q_OWNER
 from language_set import language
-# from database import DB
+from database import DB
 
 
 def new_quote_handler(update, context):
@@ -15,6 +15,12 @@ def new_quote_handler(update, context):
 
     markup = ReplyKeyboardMarkup([[c.text['yes'][lang]], [c.text['no'][lang]]], resize_keyboard=True, one_time_keyboard=True)
     context.bot.send_message(chat_id=update.effective_chat.id, text=f"Here's ur quote: \"{quote_text}\" © {q_owner}. Is it correct?", reply_markup=markup)  # TO-DO: config
+
+    DB.addNewQuote(update.effective_chat.id, quote_text, q_owner) 
+    # TO-DO: 
+    # 1. make a confirmation function and store in DB only after "yes". If "no", start all over again from add_new_quote()
+    # 2. after adding to DB show the main menu markup and return to MAIN_MENU_HANDLER
+
 
 
 def add_q_owner(update, context):
