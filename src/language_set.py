@@ -1,5 +1,5 @@
 from telegram import ReplyKeyboardMarkup
-from variables import *
+from variables import MAIN_MENU_HANDLER
 import config as c
 
 from database import DB

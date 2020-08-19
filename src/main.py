@@ -1,8 +1,7 @@
-from telegram import ReplyKeyboardMarkup
+from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import Updater, CommandHandler, ConversationHandler, MessageHandler, Filters
 
 import logging
-import random
 from dotenv import load_dotenv
 from os import environ as env, getcwd
 
@@ -11,54 +10,16 @@ from variables import *
 from language_set import language, setting_lang
 from database import DB
 
+from random_quote import get_random_quote, random_quote_handler
+from all_quotes import full_list_quotes
+from new_quote import add_new_quote, add_q_owner, new_quote_handler
 
+### Bot's logic starts from the BOTTOM
+### If you see any errors connected with uppercase variables(i.e. NEW_QUOTE_HANDLER) and importing, DON'T pay attention to them
 
 load_dotenv()
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
-
-
-def add_new_quote(update, context):
-    pass
-
-
-def full_list_quotes(update, context):
-    result = DB.getFullListQuotes(update.effective_chat.id)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
-
-    # TO-DO:
-    #       1. if list is empty, let user know about it
-    #       2. make a message generator(loop to show all quotes one by one), if statement in this loop for q_owner == None
-
-    return MAIN_MENU_HANDLER
-
-
-def random_quote_handler(update, context):
-    lang = language(update)
-    answer = update.message.text
-    
-    if answer == "More":  # TO-DO: config
-        return get_random_quote(update, context)
-    elif answer == "Back":
-        markup = ReplyKeyboardMarkup([['Get random quote', 'Full list of quotes'], ['Add a new quote']], resize_keyboard=True, one_time_keyboard=False)  # TO-DO: config
-        context.bot.send_message(chat_id=update.effective_chat.id, text=c.text['start_q'][lang], reply_markup=markup)
-        return MAIN_MENU_HANDLER
-
-
-def get_random_quote(update, context):
-    lang = language(update)
-    rand_quote, q_owner = DB.getRandomQuote(update.effective_chat.id)
-
-    context.bot.send_message(chat_id=update.effective_chat.id, text=c.text['get_random_quote'][lang])
-
-    if rand_quote == None and q_owner == None:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, you don't have any quotes yet!") # TO-DO: config
-        return MAIN_MENU_HANDLER
-    else:
-        markup = ReplyKeyboardMarkup([['More'], ['Back']], resize_keyboard=True, one_time_keyboard=False)  # TO-DO: config
-        context.bot.send_message(chat_id=update.effective_chat.id, text=f" \"{rand_quote}\" © {q_owner}", reply_markup=markup)
-
-        return RANDOM_QUOTE_HANDLER
 
 
 def unknown_command(update, context):
@@ -76,7 +37,7 @@ def main_menu(update, context):
     elif answer == 'Full list of quotes':
         return full_list_quotes(update, context)
     elif answer == 'Add a new quote':
-        return ADD_NEW_QUOTE
+        return add_new_quote(update, context)
     else:
         return unknown_command(update, context)
 
@@ -116,9 +77,11 @@ def main():
             LANG:                  [*necessary_handlers, MessageHandler(Filters.text, setting_lang)],
             MAIN_MENU_HANDLER:     [*necessary_handlers, MessageHandler(Filters.text, main_menu)],
             GET_RANDOM_QUOTE:      [*necessary_handlers, MessageHandler(Filters.text, get_random_quote)],
+            RANDOM_QUOTE_HANDLER:  [*necessary_handlers, MessageHandler(Filters.text, random_quote_handler)],
             FULL_LIST_QUOTES:      [*necessary_handlers, MessageHandler(Filters.text, full_list_quotes)],
             ADD_NEW_QUOTE:         [*necessary_handlers, MessageHandler(Filters.text, add_new_quote)],
-            RANDOM_QUOTE_HANDLER:  [*necessary_handlers, MessageHandler(Filters.text, random_quote_handler)],
+            ADD_Q_OWNER:           [*necessary_handlers, MessageHandler(Filters.text, add_q_owner)],
+            NEW_QUOTE_HANDLER:     [*necessary_handlers, MessageHandler(Filters.text, new_quote_handler)],
             },
 
         fallbacks=[CommandHandler('stop', done)], allow_reentry=True
