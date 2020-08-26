@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 Quote_bot_DB.db
 .vscode/settings.json
+/.idea/
