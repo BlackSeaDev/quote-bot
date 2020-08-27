@@ -10,10 +10,10 @@ def random_quote_handler(update, context):
     lang = language(update)
     answer = update.message.text
     
-    if answer == "More":  # TO-DO: config
+    if answer == c.text['more'][lang]:
         return get_random_quote(update, context)
-    elif answer == "Back":
-        markup = ReplyKeyboardMarkup([['Get random quote', 'Full list of quotes'], ['Add a new quote']], resize_keyboard=True, one_time_keyboard=False)  # TO-DO: config
+    elif answer == c.text['back'][lang]:
+        markup = ReplyKeyboardMarkup([[c.text['get_random_quote'][lang], c.text['full_list_of_quotes'][lang]], [c.text['add_new_quote'][lang]]], resize_keyboard=True, one_time_keyboard=False)
         context.bot.send_message(chat_id=update.effective_chat.id, text=c.text['start_q'][lang], reply_markup=markup)
         return MAIN_MENU_HANDLER
 
@@ -24,11 +24,11 @@ def get_random_quote(update, context):
 
     context.bot.send_message(chat_id=update.effective_chat.id, text=c.text['get_random_quote'][lang])
 
-    if rand_quote == None and q_owner == None: # TO-DO: add one more if statement: when q_owner == None, don't show this
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, you don't have any quotes yet!") # TO-DO: config
+    if rand_quote is None and q_owner is None:  # TO-DO: add one more if statement: when q_owner == None, don't show this
+        context.bot.send_message(chat_id=update.effective_chat.id, text=c.text['empty_list'][lang])
         return MAIN_MENU_HANDLER
     else:
-        markup = ReplyKeyboardMarkup([['More'], ['Back']], resize_keyboard=True, one_time_keyboard=False)  # TO-DO: config
+        markup = ReplyKeyboardMarkup([[c.text['more'][lang]], [c.text['back'][lang]]], resize_keyboard=True, one_time_keyboard=False)
         context.bot.send_message(chat_id=update.effective_chat.id, text=f" \"{rand_quote}\" © {q_owner}", reply_markup=markup)
 
         return RANDOM_QUOTE_HANDLER

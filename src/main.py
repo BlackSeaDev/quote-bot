@@ -11,7 +11,7 @@ from language_set import language, setting_lang
 from database import DB
 
 from random_quote import get_random_quote, random_quote_handler
-from all_quotes import full_list_quotes
+from all_quotes import full_list_of_quotes
 from new_quote import add_new_quote, add_q_owner, new_quote_handler
 
 ### Bot's logic starts from the BOTTOM
@@ -31,12 +31,12 @@ def unknown_command(update, context):
 
 def main_menu(update, context):
     answer = update.message.text
-
-    if answer == 'Get random quote':  # TO-DO: config
+    lang = language(update)
+    if answer == c.text['get_random_quote'][lang]:
         return get_random_quote(update, context)
-    elif answer == 'Full list of quotes':
-        return full_list_quotes(update, context)
-    elif answer == 'Add a new quote':
+    elif answer == c.text['full_list_of_quotes'][lang]:
+        return full_list_of_quotes(update, context)
+    elif answer == c.text['add_new_quote'][lang]:
         return add_new_quote(update, context)
     else:
         return unknown_command(update, context)
@@ -46,8 +46,8 @@ def start(update, context):
     lang = language(update)
     
     if lang == 0 or lang == 1:
-        markup = ReplyKeyboardMarkup([['Get random quote', 'Full list of quotes'], ['Add a new quote']], resize_keyboard=True, one_time_keyboard=False)  # TO-DO: config
-        #update.message.reply_text(text='HErsae2', reply_markup=markup)
+        markup = ReplyKeyboardMarkup([[c.text['get_random_quote'][lang], c.text['full_list_of_quotes'][lang]], [c.text['add_new_quote'][lang]]], resize_keyboard=True, one_time_keyboard=False)
+        # update.message.reply_text(text='HErsae2', reply_markup=markup)
         context.bot.send_message(chat_id=update.effective_chat.id, text=c.text['start_q'][lang], reply_markup=markup)
     else:
         return LANG
@@ -78,7 +78,7 @@ def main():
             MAIN_MENU_HANDLER:     [*necessary_handlers, MessageHandler(Filters.text, main_menu)],
             GET_RANDOM_QUOTE:      [*necessary_handlers, MessageHandler(Filters.text, get_random_quote)],
             RANDOM_QUOTE_HANDLER:  [*necessary_handlers, MessageHandler(Filters.text, random_quote_handler)],
-            FULL_LIST_QUOTES:      [*necessary_handlers, MessageHandler(Filters.text, full_list_quotes)],
+            FULL_LIST_QUOTES:      [*necessary_handlers, MessageHandler(Filters.text, full_list_of_quotes)],
             ADD_NEW_QUOTE:         [*necessary_handlers, MessageHandler(Filters.text, add_new_quote)],
             ADD_Q_OWNER:           [*necessary_handlers, MessageHandler(Filters.text, add_q_owner)],
             NEW_QUOTE_HANDLER:     [*necessary_handlers, MessageHandler(Filters.text, new_quote_handler)],

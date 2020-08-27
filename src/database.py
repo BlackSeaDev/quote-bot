@@ -91,7 +91,7 @@ class DbInterface:
 
         return quote, q_owner
 
-    def getFullListQuotes(self, user_id: int) -> list:
+    def getFullListOfQuotes(self, user_id: int) -> list:
         sql = 'SELECT * FROM Quotes Where user_id = ?'
         args = [user_id]
         self.execute_sql([sql, args])
