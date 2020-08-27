@@ -1,4 +1,4 @@
-text = {
+language_config = {
     # START
     "start": 'Приветствую, я бот для цитат! / Hi, i am quote bot!',
 

@@ -5,7 +5,7 @@ import logging
 from dotenv import load_dotenv
 from os import environ as env, getcwd
 
-import config as c
+import config
 from variables import *
 from language_set import language, setting_lang
 from database import DB
@@ -32,11 +32,11 @@ def unknown_command(update, context):
 def main_menu(update, context):
     answer = update.message.text
     lang = language(update)
-    if answer == c.text['get_random_quote'][lang]:
+    if answer == config.language_config['get_random_quote'][lang]:
         return get_random_quote(update, context)
-    elif answer == c.text['full_list_of_quotes'][lang]:
+    elif answer == config.language_config['full_list_of_quotes'][lang]:
         return full_list_of_quotes(update, context)
-    elif answer == c.text['add_new_quote'][lang]:
+    elif answer == config.language_config['add_new_quote'][lang]:
         return add_new_quote(update, context)
     else:
         return unknown_command(update, context)
@@ -46,9 +46,9 @@ def start(update, context):
     lang = language(update)
     
     if lang == 0 or lang == 1:
-        markup = ReplyKeyboardMarkup([[c.text['get_random_quote'][lang], c.text['full_list_of_quotes'][lang]], [c.text['add_new_quote'][lang]]], resize_keyboard=True, one_time_keyboard=False)
-        # update.message.reply_text(text='HErsae2', reply_markup=markup)
-        context.bot.send_message(chat_id=update.effective_chat.id, text=c.text['start_q'][lang], reply_markup=markup)
+        markup = ReplyKeyboardMarkup([[config.language_config['get_random_quote'][lang], config.language_config['full_list_of_quotes'][lang]], [config.language_config['add_new_quote'][lang]]], resize_keyboard=True, one_time_keyboard=False)
+        # update.message.reply_text(language_config='HErsae2', reply_markup=markup)
+        context.bot.send_message(chat_id=update.effective_chat.id, text=config.language_config['start_q'][lang], reply_markup=markup)
     else:
         return LANG
 
