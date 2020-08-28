@@ -8,11 +8,10 @@ from os import environ as env, getcwd
 import config
 from variables import *
 from language_set import language, setting_lang
-from database import DB
 
 from random_quote import get_random_quote, random_quote_handler
 from all_quotes import full_list_of_quotes
-from new_quote import add_new_quote, add_q_owner, new_quote_handler
+from new_quote import add_new_quote, add_q_owner, new_quote_handler, confirmation_quote_handler
 
 ### Bot's logic starts from the BOTTOM
 ### If you see any errors connected with uppercase variables(i.e. NEW_QUOTE_HANDLER) and importing, DON'T pay attention to them
@@ -23,7 +22,8 @@ logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s
 
 
 def unknown_command(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text='Unknown command')
+    lang = language(update)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=config.language_config['unknown_command'][lang])
     filename = getcwd() + '/media/photo.png'
     with open(filename, 'rb') as file:
         context.bot.send_photo(chat_id=update.effective_chat.id, photo=file, caption='Press this button and choose the option') #TO-DO: config
@@ -44,7 +44,7 @@ def main_menu(update, context):
 
 def start(update, context):
     lang = language(update)
-    
+
     if lang == 0 or lang == 1:
         markup = ReplyKeyboardMarkup([[config.language_config['get_random_quote'][lang], config.language_config['full_list_of_quotes'][lang]], [config.language_config['add_new_quote'][lang]]], resize_keyboard=True, one_time_keyboard=False)
         # update.message.reply_text(language_config='HErsae2', reply_markup=markup)
@@ -74,19 +74,20 @@ def main():
         entry_points=[CommandHandler('start', start)],
 
         states={
-            LANG:                  [*necessary_handlers, MessageHandler(Filters.text, setting_lang)],
-            MAIN_MENU_HANDLER:     [*necessary_handlers, MessageHandler(Filters.text, main_menu)],
-            GET_RANDOM_QUOTE:      [*necessary_handlers, MessageHandler(Filters.text, get_random_quote)],
-            RANDOM_QUOTE_HANDLER:  [*necessary_handlers, MessageHandler(Filters.text, random_quote_handler)],
-            FULL_LIST_QUOTES:      [*necessary_handlers, MessageHandler(Filters.text, full_list_of_quotes)],
-            ADD_NEW_QUOTE:         [*necessary_handlers, MessageHandler(Filters.text, add_new_quote)],
-            ADD_Q_OWNER:           [*necessary_handlers, MessageHandler(Filters.text, add_q_owner)],
-            NEW_QUOTE_HANDLER:     [*necessary_handlers, MessageHandler(Filters.text, new_quote_handler)],
+            LANG:                       [*necessary_handlers, MessageHandler(Filters.text, setting_lang)],
+            MAIN_MENU_HANDLER:          [*necessary_handlers, MessageHandler(Filters.text, main_menu)],
+            GET_RANDOM_QUOTE:           [*necessary_handlers, MessageHandler(Filters.text, get_random_quote)],
+            RANDOM_QUOTE_HANDLER:       [*necessary_handlers, MessageHandler(Filters.text, random_quote_handler)],
+            FULL_LIST_QUOTES:           [*necessary_handlers, MessageHandler(Filters.text, full_list_of_quotes)],
+            ADD_NEW_QUOTE:              [*necessary_handlers, MessageHandler(Filters.text, add_new_quote)],
+            ADD_Q_OWNER:                [*necessary_handlers, MessageHandler(Filters.text, add_q_owner)],
+            NEW_QUOTE_HANDLER:          [*necessary_handlers, MessageHandler(Filters.text, new_quote_handler)],
+            CONFIRMATION_QUOTE_HANDLER: [*necessary_handlers, MessageHandler(Filters.text, confirmation_quote_handler)],
             },
 
         fallbacks=[CommandHandler('stop', done)], allow_reentry=True
     )
-    
+
     dp.add_handler(conv_handler)
 
     updater.start_polling()

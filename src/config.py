@@ -71,4 +71,8 @@ language_config = {
 
     'adding_quote_to_database': {0: "Цитата успешно добавлена в список.",
                                  1: "Quote was successfully added in the list."},
+
+    # UNKNOWN_COMMAND
+    'unknown_command': {0: "Неизвестная команда.",
+                        1: "Unknown command."},
 }
