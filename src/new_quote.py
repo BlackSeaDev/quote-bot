@@ -9,11 +9,13 @@ from database import DB
 def new_quote_handler(update, context):
     answer = update.message.text
     lang = language(update)
+
     q_owner = update.message.text
     quote_text = context.chat_data['quote_text']
     context.chat_data['quote_owner'] = q_owner
+
     markup = ReplyKeyboardMarkup([[config.language_config['yes'][lang]], [config.language_config['no'][lang]]], resize_keyboard=True, one_time_keyboard=True)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=config.language_config['show_new_quote'][lang].format(quote_text, q_owner), reply_markup=markup)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=config.language_config['show_new_quote'][lang].format(quote_text, context.chat_data['quote_owner']), reply_markup=markup)
 
     if answer == config.language_config['yes'][lang]:
         DB.addNewQuote(update.effective_chat.id, quote_text, q_owner)
@@ -22,11 +24,11 @@ def new_quote_handler(update, context):
         context.bot.send_message(chat_id=update.effective_chat.id, text=config.language_config['start_q'][lang], reply_markup=markup)
         return MAIN_MENU_HANDLER
     elif answer == config.language_config['no'][lang]:
-        add_new_quote(update, context)
-        return ADD_NEW_QUOTE
+        context.bot.send_message(chat_id=update.effective_chat.id, text=config.language_config['type_the_quote'][lang], reply_markup=ReplyKeyboardRemove())
+        return ADD_Q_OWNER
 
     # TO-DO: 
-    # 1. make a confirmation function and store in DB only after "yes". If "no", start all over again from add_new_quote()
+    # 1. make "no", start all over again from add_new_quote()
 
 
 def add_q_owner(update, context):

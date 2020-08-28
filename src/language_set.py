@@ -18,7 +18,7 @@ def language(update):
 
 
 def setting_lang(update, context):
-    answer = update.message.language_config
+    answer = update.message.text
     if answer == config.language_config["en"]:
         lang = 1
         DB.setLang(update.effective_chat.id, lang)
