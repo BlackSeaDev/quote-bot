@@ -3,6 +3,8 @@ from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove
 import config
 from variables import MAIN_MENU_HANDLER, RANDOM_QUOTE_HANDLER
 from language_set import language
+from unknown_command import unknown_command
+
 from database import DB
 
 
@@ -16,6 +18,8 @@ def random_quote_handler(update, context):
         markup = ReplyKeyboardMarkup([[config.language_config['get_random_quote'][lang], config.language_config['full_list_of_quotes'][lang]], [config.language_config['add_new_quote'][lang]]], resize_keyboard=True, one_time_keyboard=False)
         context.bot.send_message(chat_id=update.effective_chat.id, text=config.language_config['start_q'][lang], reply_markup=markup)
         return MAIN_MENU_HANDLER
+    else:
+        return unknown_command(update, context)
 
 
 def get_random_quote(update, context):

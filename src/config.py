@@ -75,4 +75,7 @@ language_config = {
     # UNKNOWN_COMMAND
     'unknown_command': {0: "Неизвестная команда.",
                         1: "Unknown command."},
+
+    'press_button': {0: "Нажмите на эту кнопку и выбирите вариант:",
+                     1: "Press this button and choose an option:"},
 }
